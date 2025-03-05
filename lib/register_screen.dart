@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import 'habit_tracker_screen.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,21 +14,21 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
-  double _age = 25; // Default age set to 25
-  String _country = 'United States';
+  double _age = 25; // Âge par défaut fixé à 25
+  String _country = 'États-Unis';
   List<String> _countries = [];
   List<String> selectedHabits = [];
   List<String> availableHabits = [
-    'Wake Up Early',
-    'Workout',
-    'Drink Water',
-    'Meditate',
-    'Read a Book',
-    'Practice Gratitude',
-    'Sleep 8 Hours',
-    'Eat Healthy',
-    'Journal',
-    'Walk 10,000 Steps'
+    'Se réveiller tôt',
+    'Faire de l\'exercice',
+    'Boire de l\'eau',
+    'Méditer',
+    'Lire un livre',
+    'Pratiquer la gratitude',
+    'Dormir 8 heures',
+    'Manger sainement',
+    'Tenir un journal',
+    'Marcher 10 000 étapes'
   ];
 
   @override
@@ -37,29 +39,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _fetchCountries() async {
     List<String> subsetCountries = [
-      'United States',
+      'États-Unis',
       'Canada',
-      'United Kingdom',
-      'Australia',
-      'India',
-      'Germany',
+      'Royaume-Uni',
+      'Australie',
+      'Inde',
+      'Allemagne',
       'France',
-      'Japan',
-      'China',
-      'Brazil',
-      'South Africa'
+      'Japon',
+      'Chine',
+      'Brésil',
+      'Afrique du Sud'
     ];
 
     setState(() {
       _countries = subsetCountries;
       _countries.sort();
-      _country = _countries.isNotEmpty ? _countries[0] : 'United States';
+      _country = _countries.isNotEmpty ? _countries[0] : 'États-Unis';
     });
   }
 
+  void _showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
   void _register() async {
-    // dummy for now
-    print("registration logic here");
+    final name = _nameController.text;
+    final username = _usernameController.text;
+
+    if (username.isEmpty || name.isEmpty) {
+      _showToast('Veuillez remplir tous les champs');
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HabitTrackerScreen(username: username),
+      ),
+    );
   }
 
   @override
@@ -68,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade700,
         title: const Text(
-          'Register',
+          'Inscription',
           style: TextStyle(
             fontSize: 32,
             color: Colors.white,
@@ -100,12 +125,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInputField(_nameController, 'Name', Icons.person),
+                _buildInputField(_nameController, 'Nom', Icons.person),
                 const SizedBox(height: 10),
                 _buildInputField(
-                    _usernameController, 'Username', Icons.alternate_email),
+                    _usernameController, 'Nom d\'utilisateur', Icons.alternate_email),
                 const SizedBox(height: 10),
-                Text('Age: ${_age.round()}',
+                Text('Âge : ${_age.round()}',
                     style: const TextStyle(color: Colors.white, fontSize: 18)),
                 Slider(
                   value: _age,
@@ -123,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 10),
                 _buildCountryDropdown(),
                 const SizedBox(height: 10),
-                const Text('Select Your Habits',
+                const Text('Sélectionnez vos habitudes',
                     style: TextStyle(color: Colors.white, fontSize: 18)),
                 Wrap(
                   spacing: 10,
@@ -166,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           horizontal: 80, vertical: 15),
                     ),
                     child: const Text(
-                      'Register',
+                      'S\'inscrire',
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,

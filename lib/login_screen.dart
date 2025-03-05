@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'habit_tracker_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,13 +14,25 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // Default credentials
+  // Identifiants par défaut
   final String defaultUsername = 'testuser';
   final String defaultPassword = 'password123';
 
   void _login() {
-    // The login logic goes here
+    // La logique de connexion va ici
     print("login logic here");
+
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    if (username == defaultUsername && password == defaultPassword) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HabitTrackerScreen(username: username),
+        ),
+      );
+    }
   }
 
   @override
@@ -58,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       prefixIcon:
                           Icon(Icons.email, color: Colors.blue.shade700),
-                      hintText: 'Enter Username',
+                      hintText: 'Entrez le nom d’utilisateur',
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 15),
@@ -76,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock, color: Colors.blue.shade700),
-                      hintText: 'Enter Password',
+                      hintText: 'Entrez le mot de passe',
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 15),
@@ -88,10 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      // Logic for forgot password can be added here
+                      // La logique pour le mot de passe oublié peut être ajoutée ici
                     },
                     child: const Text(
-                      'Forgot password?',
+                      'Mot de passe oublié ?',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -108,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         horizontal: 80, vertical: 15),
                   ),
                   child: const Text(
-                    'Log in',
+                    'Se connecter',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
@@ -118,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'or',
+                  'ou',
                   style: TextStyle(color: Colors.white70),
                 ),
                 const SizedBox(height: 10),
@@ -139,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         horizontal: 70, vertical: 15),
                   ),
                   child: const Text(
-                    'Sign up',
+                    'S\'inscrire',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
