@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'add_habit_screen.dart';
+import 'login_screen.dart';
+import 'notifications_screen.dart';
+import 'personal_info_screen.dart';
+import 'reports_screen.dart';
 
 class HabitTrackerScreen extends StatefulWidget {
   final String username;
@@ -45,7 +49,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
   Color _getColorFromHex(String hexColor) {
     hexColor = hexColor.replaceAll('#', '');
     if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor'; // Add opacity if not included.
+      hexColor = 'FF$hexColor'; // Ajouter de l'opacité si non inclus.
     }
     return Color(int.parse('0x$hexColor'));
   }
@@ -56,10 +60,10 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       try {
         return _getColorFromHex(colorHex);
       } catch (e) {
-        print('Error parsing color for $habit: $e');
+        print('Erreur lors de l\'analyse de la couleur pour $habit: $e');
       }
     }
-    return Colors.blue; // Default color in case of error.
+    return Colors.blue; // Couleur par défaut en cas d'erreur.
   }
 
   @override
@@ -68,7 +72,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade700,
         title: Text(
-          name.isNotEmpty ? name : 'Loading...',
+          name.isNotEmpty ? name : 'Chargement...',
           style: const TextStyle(
             fontSize: 24,
             color: Colors.white,
@@ -77,12 +81,92 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
         ),
         automaticallyImplyLeading: true,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue.shade700,
+              ),
+              child: const Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configurer'),
+              onTap: () async {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddHabitScreen(),
+                  ),
+                ).then((updatedHabits) {
+                  _loadUserData(); // Recharger les données après le retour
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Informations personnelles'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PersonalInfoScreen()),
+                ).then((_) {
+                  _loadUserData(); // Recharger les données après le retour
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.analytics),
+              title: const Text('Rapports'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ReportsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.notifications),
+              title: Text('Notifications'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Déconnexion'),
+              onTap: () {
+                _signOut(context);
+              },
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              'To Do 📝',
+              'À faire 📝',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -93,7 +177,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               ? const Expanded(
                   child: Center(
                     child: Text(
-                      'Use the + button to create some habits!',
+                      'Utilisez le bouton + pour créer des habitudes !',
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ),
@@ -124,7 +208,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                'Swipe to Complete',
+                                'Glissez pour compléter',
                                 style: TextStyle(color: Colors.white),
                               ),
                               SizedBox(width: 10),
@@ -137,11 +221,11 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     },
                   ),
                 ),
-          Divider(),
+          const Divider(),
           const Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Done ✅🎉',
+              'Fait ✅🎉',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -152,7 +236,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
               ? const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    'Swipe right on an activity to mark as done.',
+                    'Glissez vers la droite sur une activité pour marquer comme fait.',
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                 )
@@ -183,7 +267,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                               Icon(Icons.undo, color: Colors.white),
                               SizedBox(width: 10),
                               Text(
-                                'Swipe to Undo',
+                                'Glissez pour annuler',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ],
@@ -206,14 +290,24 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
                     builder: (context) => AddHabitScreen(),
                   ),
                 ).then((_) {
-                  _loadUserData(); // Reload data after returning
+                  _loadUserData(); // Recharger les données après le retour
                 });
               },
-              child: Icon(Icons.add),
               backgroundColor: Colors.blue.shade700,
-              tooltip: 'Add Habits',
+              tooltip: 'Ajouter des habitudes',
+              child: const Icon(Icons.add),
             )
           : null,
+    );
+  }
+
+  void _signOut(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
@@ -223,7 +317,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       color: color,
       child: Container(
-        height: 60, // Adjust the height for thicker cards.
+        height: 60, // Ajuster la hauteur pour des cartes plus épaisses.
         child: ListTile(
           title: Text(
             title.toUpperCase(),
@@ -234,7 +328,7 @@ class _HabitTrackerScreenState extends State<HabitTrackerScreen> {
             ),
           ),
           trailing: isCompleted
-              ? Icon(Icons.check_circle, color: Colors.green, size: 28)
+              ? const Icon(Icons.check_circle, color: Colors.green, size: 28)
               : null,
         ),
       ),
