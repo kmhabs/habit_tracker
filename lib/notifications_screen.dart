@@ -42,7 +42,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Color _getColorFromHex(String hexColor) {
     hexColor = hexColor.replaceAll('#', '');
     if (hexColor.length == 6) {
-      hexColor = 'FF$hexColor'; // Ajouter l'opacité si non incluse.
+      hexColor = 'FF$hexColor'; // Add opacity if not included.
     }
     return Color(int.parse('0x$hexColor'));
   }
@@ -51,17 +51,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     if (html.Notification.permission != "granted") {
       html.Notification.requestPermission().then((permission) {
         if (permission == 'granted') {
-          html.Notification("Rappel d'Habitude",
-              body: "Il est temps de travailler sur vos habitudes !");
-          print('Permission de notification accordée. Notification envoyée.');
+          html.Notification("Habit Reminder",
+              body: "It's time to work on your habits!");
+          print('Notification permission granted. Notification sent.');
         } else {
-          print('Permission de notification refusée.');
+          print('Notification permission denied.');
         }
       });
     } else {
-      html.Notification("Rappel d'Habitude",
-          body: "Il est temps de travailler sur vos habitudes !");
-      print('Notification envoyée directement.');
+      html.Notification("Habit Reminder",
+          body: "It's time to work on your habits!");
+      print('Notification sent directly.');
     }
   }
 
@@ -78,7 +78,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwitchListTile(
-              title: Text('Activer les Notifications'),
+              title: Text('Enable Notifications'),
               value: notificationsEnabled,
               onChanged: (value) {
                 setState(() {
@@ -89,7 +89,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             Divider(),
             Text(
-              'Sélectionnez les Habitudes pour Notification',
+              'Select Habits for Notification',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
@@ -122,14 +122,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             SizedBox(height: 20),
             Text(
-              'Sélectionnez les Heures pour Notification',
+              'Select Times for Notification',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
             Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
-              children: ['Matin', 'Après-midi', 'Soir'].map((time) {
+              children: ['Morning', 'Afternoon', 'Evening'].map((time) {
                 return FilterChip(
                   label: Text(time),
                   selected: selectedTimes.contains(time),
@@ -149,10 +149,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             Spacer(),
             ElevatedButton(
               onPressed: () {
-                // Utilisez la méthode _sendTestNotification pour déclencher la notification
                 _sendTestNotification();
               },
-              child: Text('Envoyer Notification de Test'),
+              child: Text('Send Test Notification'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue.shade700,
                 foregroundColor: Colors.white,
